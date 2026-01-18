@@ -1,18 +1,24 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import path from "path";
+import { fileURLToPath } from "url";
+
 import express from "express";
 import mysql from "mysql2/promise";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/users.routes.js";
 
-import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 
+// ===== DB Pool =====
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -21,19 +27,19 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-// ===== Routes =====
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-    customSiteTitle: "API Documentation",
-  })
-);
+// ===== API Routes =====
 app.use("/api", authRoutes(pool));
 app.use("/api/users", userRoutes(pool));
+
+// ===== Swagger JSON =====
+app.get("/swagger.json", (req, res) => {
+  res.json(swaggerSpec);
+});
+
+// ===== Swagger UI (STATIC) =====
+app.get("/api-docs", (req, res) => {
+  res.sendFile(path.join(__dirname, "swagger-ui.html"));
+});
 
 // ===== GLOBAL PING =====
 app.get("/ping", (req, res) => {
@@ -42,11 +48,6 @@ app.get("/ping", (req, res) => {
     time: new Date().toISOString(),
   });
 });
-// ===== Start Server =====
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Swagger → http://localhost:${PORT}/api-docs`);
-});
 
+// ❌ ห้าม listen บน Vercel
 export default app;
