@@ -26,6 +26,13 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", authRoutes(pool));
 app.use("/api/users", userRoutes(pool));
 
+// ===== GLOBAL PING =====
+app.get("/ping", (req, res) => {
+  res.json({
+    message: "API is alive",
+    time: new Date().toISOString(),
+  });
+});
 // ===== Start Server =====
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
