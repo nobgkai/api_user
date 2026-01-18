@@ -22,7 +22,16 @@ const pool = mysql.createPool({
 });
 
 // ===== Routes =====
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+    customSiteTitle: "API Documentation",
+  })
+);
 app.use("/api", authRoutes(pool));
 app.use("/api/users", userRoutes(pool));
 
