@@ -10,7 +10,7 @@ const options = {
     },
     servers: [
       {
-        url: "/",
+        url: "/api",
       },
     ],
     components: {
