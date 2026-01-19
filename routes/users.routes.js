@@ -282,7 +282,7 @@ export default function userRoutes(pool) {
     try {
       const { id } = req.params;
 
-      // ✅ ป้องกัน req.body ว่าง
+      // ป้องกัน body ว่าง
       if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({
           message: "กรุณาส่งข้อมูลสำหรับแก้ไข",
@@ -293,6 +293,7 @@ export default function userRoutes(pool) {
         prefix,
         firstname,
         lastname,
+        username,
         gender,
         birthdate,
         address,
@@ -304,12 +305,23 @@ export default function userRoutes(pool) {
        SET prefix = ?,
            firstname = ?,
            lastname = ?,
+           username = ?, 
            gender = ?,
            birthdate = ?,
            address = ?,
            status = ?
        WHERE id = ?`,
-        [prefix, firstname, lastname, gender, birthdate, address, status, id]
+        [
+          prefix,
+          firstname,
+          lastname,
+          username, // ✅ สำคัญมาก ต้องอยู่ตรงนี้
+          gender,
+          birthdate,
+          address,
+          status,
+          id,
+        ]
       );
 
       if (result.affectedRows === 0) {
