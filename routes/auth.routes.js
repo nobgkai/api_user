@@ -93,7 +93,15 @@ export default function authRoutes(pool) {
         { expiresIn: "1h" }
       );
 
-      res.json({ message: "login success", token });
+      res.json({
+        message: "login success",
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+        },
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
