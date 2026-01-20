@@ -244,6 +244,7 @@ export default function userRoutes(pool) {
    *             prefix: นาย
    *             firstname: สมชาย
    *             lastname: ใจดี
+   *             username: somchai01
    *             gender: male
    *             birthdate: 2000-01-01
    *             address: เชียงใหม่
@@ -299,7 +300,18 @@ export default function userRoutes(pool) {
         address,
         status,
       } = req.body;
+      // 🔹 ดึง username เดิมจาก DB
+      const [[user]] = await pool.query(
+        "SELECT username FROM tbl_users WHERE id = ?",
+        [id]
+      );
 
+      if (!user) {
+        return res.status(404).json({ message: "ไม่พบผู้ใช้" });
+      }
+
+      // 🔹 ถ้าไม่ส่ง username → ใช้ของเดิม
+      const finalUsername = username ?? user.username;
       const [result] = await pool.query(
         `UPDATE tbl_users
        SET prefix = ?,
