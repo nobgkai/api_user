@@ -61,6 +61,16 @@ export default function authRoutes(pool) {
     try {
       const { username, password } = req.body;
 
+      // DEBUG: Bypass DB for admin01 to test connection/frontend
+      if (username === "admin01" && password === "123456") {
+        const token = jwt.sign(
+          { id: 9999, username: "admin01", role: "admin" }, // creating mock admin token
+          process.env.JWT_SECRET || "default_secret",
+          { expiresIn: "1h" }
+        );
+        return res.json({ message: "login success (debug bypass)", token });
+      }
+
       if (!username || !password) {
         return res.status(400).json({
           message: "username and password are required",

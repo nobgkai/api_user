@@ -327,7 +327,7 @@ export default function userRoutes(pool) {
           prefix,
           firstname,
           lastname,
-          username, // ✅ สำคัญมาก ต้องอยู่ตรงนี้
+          finalUsername, // ✅ สำคัญมาก ต้องอยู่ตรงนี้
           gender,
           birthdate,
           address,
